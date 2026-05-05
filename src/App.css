@@ -1,0 +1,285 @@
+@import url("https://fonts.googleapis.com/css2?family=Shrikhand&display=swap");
+
+:root {
+  --cream: #faf9f6;
+  --blue: #dff7f9;
+  --green: #c8e9ba;
+  --pink: #ee99bd;
+  --aqua: #a7dfe2;
+  --text: #111111;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--cream);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+
+.page {
+  width: 100vw;
+  min-height: 100vh;
+  background: var(--cream);
+  overflow-x: hidden;
+}
+
+.hero-section {
+  width: 100%;
+  min-height: 58vh;
+  padding: 30px 8vw 45px;
+  background: linear-gradient(135deg, #ffd9bd, #f39af0, #f6bfd2);
+}
+
+.navbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.logo-small,
+.hero-content h1,
+.about-section h2 {
+  font-family: "Shrikhand", cursive;
+}
+
+.logo-small {
+  margin: 0;
+  color: white;
+  font-size: 36px;
+  letter-spacing: 1px;
+}
+
+.hero-content {
+  width: 100%;
+  margin-top: 70px;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  align-items: center;
+  gap: 8vw;
+}
+
+.hero-left {
+  min-width: 0;
+}
+
+.hero-content h1 {
+  margin: 0;
+  color: white;
+  font-size: clamp(80px, 14vw, 180px);
+  line-height: 0.9;
+  letter-spacing: 2px;
+}
+
+.hero-buttons {
+  margin-top: 34px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: 0;
+  border-radius: 999px;
+  padding: 14px 30px;
+  font-size: 20px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--aqua);
+  color: white;
+}
+
+.btn-secondary {
+  background: white;
+  color: var(--aqua);
+}
+
+.hero-circle {
+  width: min(26vw, 280px);
+  height: min(26vw, 280px);
+  min-width: 190px;
+  min-height: 190px;
+  background: var(--cream);
+  border-radius: 50%;
+  justify-self: center;
+}
+
+.main-layout {
+  width: 100%;
+  min-height: 42vh;
+  padding: 32px 8vw 60px;
+  display: grid;
+  grid-template-columns: 330px 1fr;
+  gap: 45px;
+  background: var(--cream);
+}
+
+.sidebar-menu {
+  width: 330px;
+  background: var(--aqua);
+  border-radius: 38px;
+  padding: 26px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-self: start;
+}
+
+.menu-pill {
+  width: 100%;
+  background: #f6bfd2;
+  color: white;
+  text-align: center;
+  border-radius: 999px;
+  padding: 24px 20px;
+  font-size: 30px;
+  font-weight: 800;
+  text-decoration: none;
+  cursor: pointer;
+}
+.sidebar-menu a {
+  cursor: pointer;
+}
+
+.about-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+.about-section h2 {
+  margin: 0;
+  color: var(--green);
+  font-size: clamp(52px, 8vw, 96px);
+  letter-spacing: 2px;
+  text-align: center;
+}
+.about-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+}
+
+.about-content {
+  max-width: 1000px;
+  text-align: center;
+}
+
+.about-content h2 {
+  margin-bottom: 20px;
+}
+
+.about-content p {
+  font-size: 18px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  color: palevioletred;
+}
+
+.about-images {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.about-card {
+  background: #f6bfd2;
+  padding: 16px;
+  border-radius: 30px;
+  text-align: center;
+  width: 180px;
+}
+
+.about-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.about-card span {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: auto;
+    padding: 24px 22px 36px;
+  }
+
+  .logo-small {
+    font-size: 30px;
+  }
+
+  .hero-content {
+    margin-top: 55px;
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+
+  .hero-content h1 {
+    font-size: clamp(68px, 22vw, 100px);
+  }
+
+  .hero-circle {
+    width: 190px;
+    height: 190px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  .main-layout {
+    grid-template-columns: 1fr;
+    padding: 22px;
+    gap: 28px;
+  }
+
+.sidebar-menu {
+  width: 100%;
+  border-radius: 30px;
+  padding: 20px;
+  gap: 16px;
+}
+
+.menu-pill {
+  font-size: 22px;
+  padding: 18px;
+}
+
+  .about-section h2 {
+    font-size: clamp(42px, 14vw, 60px);
+  }
+
+.about-section {
+  grid-template-columns: 1fr;
+  text-align: center;
+}
+
+.about-images {
+  justify-content: center;
+}
+}
