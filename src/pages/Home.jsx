@@ -6,6 +6,7 @@ import Services from "../components/Services"
 import Booking from "../components/Booking"
 import Contact from "../components/Contact"
 import CalendarAvailability from "../components/CalendarAvailability"
+import Footer from "../components/Footer"
 
 function Home() {
   return (
@@ -40,6 +41,7 @@ function Home() {
           </section>
         </div>
       </main>
+      <Footer />
     </div>
   )
 }
