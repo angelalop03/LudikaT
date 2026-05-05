@@ -1,13 +1,11 @@
 function SidebarMenu() {
-  const links = ["Home", "Nosotras", "Servicios", "Calendario", "Reserva", "Contactanos"]
-
   return (
     <aside className="sidebar-menu">
-      {links.map((link) => (
-        <a key={link} className="menu-pill">
-          {link}
-        </a>
-      ))}
+      <a href="#">Home</a>
+      <a href="#nosotras">Nosotras</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#reserva">Reserva</a>
+      <a href="#contacto">Contacto</a>
     </aside>
   )
 }

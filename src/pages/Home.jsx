@@ -2,21 +2,39 @@ import Navbar from "../components/Navbar"
 import Hero from "../components/Hero"
 import SidebarMenu from "../components/SidebarMenu"
 import About from "../components/About"
+import Services from "../components/Services"
+import Booking from "../components/Booking"
+import Contact from "../components/Contact"
 
 function Home() {
   return (
     <div className="page">
-      <div className="website-frame">
-        <header className="hero-section">
-          <Navbar />
-          <Hero />
-        </header>
+      <header className="hero-section">
+        <Navbar />
+        <Hero />
+      </header>
 
-        <main className="main-layout">
-          <SidebarMenu />
-          <About />
-        </main>
-      </div>
+      <main className="main-layout">
+        <SidebarMenu />
+
+        <div className="content">
+          <section id="nosotras">
+            <About />
+          </section>
+
+          <section id="servicios">
+            <Services />
+          </section>
+
+          <section id="reserva">
+            <Booking />
+          </section>
+
+          <section id="contacto">
+            <Contact />
+          </section>
+        </div>
+      </main>
     </div>
   )
 }
