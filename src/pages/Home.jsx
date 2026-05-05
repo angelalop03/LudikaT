@@ -5,6 +5,7 @@ import About from "../components/About"
 import Services from "../components/Services"
 import Booking from "../components/Booking"
 import Contact from "../components/Contact"
+import CalendarAvailability from "../components/CalendarAvailability"
 
 function Home() {
   return (
@@ -24,6 +25,10 @@ function Home() {
 
           <section id="servicios">
             <Services />
+          </section>
+
+          <section id="calendario">
+            <CalendarAvailability />
           </section>
 
           <section id="reserva">

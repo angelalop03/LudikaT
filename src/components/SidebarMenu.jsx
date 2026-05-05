@@ -4,6 +4,7 @@ function SidebarMenu() {
       <a href="#">Home</a>
       <a href="#nosotras">Nosotras</a>
       <a href="#servicios">Servicios</a>
+      <a href="#calendario">Calendario</a>
       <a href="#reserva">Reserva</a>
       <a href="#contacto">Contacto</a>
     </aside>
