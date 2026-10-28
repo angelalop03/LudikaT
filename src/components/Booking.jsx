@@ -1,276 +1,237 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../services/supabase"
+import Calendar from "./Calendar"
 
-const monthNames = [
-  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-  "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
-]
+const CUIDADORAS = ["Isabel", "María", "Las dos"]
 
-const weekDays = ["L", "M", "X", "J", "V", "S", "D"]
+const EMPTY_FORM = {
+  cliente_email: "",
+  telefono: "",
+  cuidadora: "",
+  servicio: "",
+  fecha: "",
+  hora: "",
+  direccion: "",
+  notas: "",
+}
+
+function formatLongDate(iso) {
+  return new Date(`${iso}T12:00:00`).toLocaleDateString("es-ES", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+  })
+}
+
+async function obtenerFechasReservadas() {
+  const { data, error } = await supabase.from("Reservas").select("fecha")
+
+  if (error) {
+    console.error("Error cargando reservas:", error)
+    return null
+  }
+  return data.map((r) => r.fecha).filter(Boolean)
+}
+
+// Avisa por correo a Isabel y María. Si falla, la reserva ya está guardada igualmente.
+async function notificarReserva(reserva) {
+  try {
+    const res = await fetch("/api/notificar-reserva", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(reserva),
+    })
+    if (!res.ok) console.warn("No se pudo enviar el aviso por correo:", res.status)
+  } catch (error) {
+    console.warn("No se pudo enviar el aviso por correo:", error)
+  }
+}
 
 function Booking() {
-  const [reservas, setReservas] = useState([])
-  const [showCalendar, setShowCalendar] = useState(false)
-  const [currentDate, setCurrentDate] = useState(new Date())
+  const [reservedDates, setReservedDates] = useState([])
+  const [form, setForm] = useState(EMPTY_FORM)
+  const [status, setStatus] = useState(null)
+  const [sending, setSending] = useState(false)
 
-  const [form, setForm] = useState({
-    cliente_email: "",
-    telefono: "",
-    servicio: "",
-    fecha: "",
-    hora: "",
-    direccion: "",
-    notas: "",
-  })
-
-  const year = currentDate.getFullYear()
-  const month = currentDate.getMonth()
+  function refrescarFechas() {
+    return obtenerFechasReservadas().then((fechas) => {
+      if (fechas) setReservedDates(fechas)
+    })
+  }
 
   useEffect(() => {
-    obtenerReservas()
+    let cancelado = false
+    obtenerFechasReservadas().then((fechas) => {
+      if (fechas && !cancelado) setReservedDates(fechas)
+    })
+    return () => {
+      cancelado = true
+    }
   }, [])
 
-  async function obtenerReservas() {
-    const { data, error } = await supabase
-      .from("Reservas")
-      .select("id, fecha")
-
-    if (!error) setReservas(data)
-  }
-
   function handleChange(e) {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    })
-  }
-
-  function formatDate(day) {
-    const mm = String(month + 1).padStart(2, "0")
-    const dd = String(day).padStart(2, "0")
-    return `${year}-${mm}-${dd}`
-  }
-
-  function isReserved(day) {
-    return reservas.some((r) => r.fecha === formatDate(day))
-  }
-
-  function isPast(day) {
-    const today = new Date()
-    const date = new Date(year, month, day)
-    today.setHours(0, 0, 0, 0)
-    return date < today
-  }
-
-  function selectDay(day) {
-    if (isReserved(day) || isPast(day)) return
-
-    setForm({
-      ...form,
-      fecha: formatDate(day),
-    })
-
-    setShowCalendar(false)
-  }
-
-  function previousMonth() {
-    setCurrentDate(new Date(year, month - 1, 1))
-  }
-
-  function nextMonth() {
-    setCurrentDate(new Date(year, month + 1, 1))
+    setForm({ ...form, [e.target.name]: e.target.value })
   }
 
   async function crearReserva(e) {
     e.preventDefault()
 
     if (!form.fecha) {
-      alert("Selecciona una fecha disponible")
+      setStatus({ type: "error", text: "Elige un día libre en el calendario." })
       return
     }
 
-    const { error } = await supabase.from("Reservas").insert([
-      {
-        cliente_email: form.cliente_email,
-        telefono: form.telefono,
-        servicio: form.servicio,
-        fecha: form.fecha,
-        hora: form.hora,
-        direccion: form.direccion,
-        notas: form.notas,
-      },
-    ])
+    setSending(true)
+    const { error } = await supabase.from("Reservas").insert([form])
+    setSending(false)
 
     if (error) {
       console.error(error)
-      alert("Error al guardar la reserva")
+      setStatus({
+        type: "error",
+        text: "No hemos podido guardar la reserva. Inténtalo de nuevo o llámanos.",
+      })
       return
     }
 
-    alert("Reserva guardada correctamente")
-
-    setForm({
-      cliente_email: "",
-      telefono: "",
-      servicio: "",
-      fecha: "",
-      hora: "",
-      direccion: "",
-      notas: "",
+    notificarReserva(form)
+    setStatus({
+      type: "ok",
+      text: `¡Reserva guardada para el ${formatLongDate(form.fecha)}! Te contactaremos pronto.`,
     })
-
-    obtenerReservas()
+    setForm(EMPTY_FORM)
+    refrescarFechas()
   }
 
-  const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const firstDay = new Date(year, month, 1).getDay()
-  const emptyDays = firstDay === 0 ? 6 : firstDay - 1
-
   return (
-    <div className="booking-section">
-      <h2>Reserva</h2>
+    <section id="reserva" className="section">
+      <div className="container">
+        <div className="section-head" data-reveal>
+          <span className="label tone-mint">Reserva</span>
+          <h2 className="section-title">Elige un día y cuéntanos</h2>
+          <p className="section-lead">
+            Los días en rosa ya están reservados. Elige uno libre, rellena tus datos
+            y te confirmamos lo antes posible.
+          </p>
+        </div>
 
-      <p>Completa tus datos y elige una fecha disponible.</p>
+        <div className="booking-grid">
+          <div className="card" data-reveal>
+            <Calendar
+              reservedDates={reservedDates}
+              selected={form.fecha}
+              onSelect={(fecha) => setForm({ ...form, fecha })}
+            />
+          </div>
 
-      <form className="booking-form single-form" onSubmit={crearReserva}>
-        <input
-          name="cliente_email"
-          type="email"
-          placeholder="Email del cliente"
-          value={form.cliente_email}
-          onChange={handleChange}
-          required
-        />
+          <form className="card booking-form" onSubmit={crearReserva} data-reveal>
+            <p className={form.fecha ? "selected-day" : "selected-day is-empty"}>
+              {form.fecha ? (
+                <>
+                  Día elegido: <strong>{formatLongDate(form.fecha)}</strong>
+                </>
+              ) : (
+                "Todavía no has elegido día en el calendario"
+              )}
+            </p>
 
-        <input
-          name="telefono"
-          type="tel"
-          placeholder="Teléfono"
-          value={form.telefono}
-          onChange={handleChange}
-          required
-        />
+            <label>
+              Email
+              <input
+                name="cliente_email"
+                type="email"
+                autoComplete="email"
+                value={form.cliente_email}
+                onChange={handleChange}
+                required
+              />
+            </label>
 
-        <select
-          name="servicio"
-          value={form.servicio}
-          onChange={handleChange}
-          required
-        >
-          <option value="">Selecciona servicio</option>
-          <option value="Cuidado infantil">Cuidado infantil</option>
-          <option value="Cumpleaños">Cumpleaños</option>
-          <option value="Comunión">Comunión</option>
-        </select>
+            <label>
+              Teléfono
+              <input
+                name="telefono"
+                type="tel"
+                autoComplete="tel"
+                value={form.telefono}
+                onChange={handleChange}
+                required
+              />
+            </label>
 
-        <input
-          type="text"
-          placeholder="Selecciona una fecha"
-          value={form.fecha}
-          readOnly
-          onClick={() => setShowCalendar(true)}
-          required
-        />
+            <fieldset className="choice-group">
+              <legend>¿Con quién?</legend>
+              <div className="choice-options">
+                {CUIDADORAS.map((nombre) => (
+                  <label key={nombre} className="choice">
+                    <input
+                      type="radio"
+                      name="cuidadora"
+                      value={nombre}
+                      checked={form.cuidadora === nombre}
+                      onChange={handleChange}
+                      required
+                    />
+                    <span>{nombre}</span>
+                  </label>
+                ))}
+              </div>
+            </fieldset>
 
-        <input
-          name="hora"
-          type="time"
-          value={form.hora}
-          onChange={handleChange}
-          required
-        />
+            <div className="form-row">
+              <label>
+                Servicio
+                <select name="servicio" value={form.servicio} onChange={handleChange} required>
+                  <option value="">Selecciona</option>
+                  <option value="Cuidado infantil">Cuidado infantil</option>
+                  <option value="Cumpleaños">Cumpleaños</option>
+                  <option value="Comunión">Comunión</option>
+                </select>
+              </label>
 
-        <input
-          name="direccion"
-          type="text"
-          placeholder="Dirección"
-          value={form.direccion}
-          onChange={handleChange}
-          required
-        />
+              <label>
+                Hora
+                <input name="hora" type="time" value={form.hora} onChange={handleChange} required />
+              </label>
+            </div>
 
-        <textarea
-          name="notas"
-          placeholder="Notas"
-          value={form.notas}
-          onChange={handleChange}
-        />
+            <label>
+              Dirección
+              <input
+                name="direccion"
+                type="text"
+                autoComplete="street-address"
+                value={form.direccion}
+                onChange={handleChange}
+                required
+              />
+            </label>
 
-        <button type="submit" className="btn-primary">
-          Guardar reserva
-        </button>
-      </form>
+            <label>
+              <span>
+                Notas <span className="optional">(opcional)</span>
+              </span>
+              <textarea
+                name="notas"
+                placeholder="Número de niños, edades, alergias…"
+                value={form.notas}
+                onChange={handleChange}
+              />
+            </label>
 
-      {showCalendar && (
-        <div className="calendar-popup-overlay">
-          <div className="calendar-popup">
-            <button
-              type="button"
-              className="close-popup"
-              onClick={() => setShowCalendar(false)}
-            >
-              ×
+            <button type="submit" className="btn btn-primary" disabled={sending}>
+              {sending ? "Guardando…" : "Guardar reserva"}
             </button>
 
-            <div className="calendar-header">
-              <button type="button" onClick={previousMonth} className="calendar-nav">
-                ‹
-              </button>
-
-              <h3>
-                {monthNames[month]} {year}
-              </h3>
-
-              <button type="button" onClick={nextMonth} className="calendar-nav">
-                ›
-              </button>
-            </div>
-
-            <div className="calendar-weekdays">
-              {weekDays.map((day) => (
-                <span key={day}>{day}</span>
-              ))}
-            </div>
-
-            <div className="calendar-grid">
-              {Array.from({ length: emptyDays }).map((_, index) => (
-                <div key={`empty-${index}`} className="calendar-empty"></div>
-              ))}
-
-              {Array.from({ length: daysInMonth }, (_, index) => {
-                const day = index + 1
-                const reserved = isReserved(day)
-                const past = isPast(day)
-                const date = formatDate(day)
-
-                return (
-                  <button
-                    type="button"
-                    key={day}
-                    className={`calendar-day
-                      ${reserved ? "reserved" : ""}
-                      ${past ? "past" : ""}
-                      {!reserved && !past ? "available" : ""}
-                      ${form.fecha === date ? "selected" : ""}
-                    `}
-                    onClick={() => selectDay(day)}
-                    disabled={reserved || past}
-                  >
-                    {day}
-                  </button>
-                )
-              })}
-            </div>
-
-            <div className="calendar-legend">
-              <span className="legend available-dot"></span> Libre
-              <span className="legend reserved-dot"></span> Ocupado
-              <span className="legend past-dot"></span> Pasado
-            </div>
-          </div>
+            {status && (
+              <p className={`form-status is-${status.type}`} role="status">
+                {status.text}
+              </p>
+            )}
+          </form>
         </div>
-      )}
-    </div>
+      </div>
+    </section>
   )
 }
 

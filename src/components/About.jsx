@@ -1,30 +1,33 @@
 function About() {
   return (
-    <section className="about-section">
-      <div className="about-content">
-        <h2>¿Quiénes somos?</h2>
+    <section id="nosotras" className="section">
+      <div className="container split">
+        <div className="card" data-reveal>
+          <span className="label tone-pink">Nosotras</span>
+          <h2 className="section-title">¿Quiénes somos?</h2>
 
-        <p>
-          Hola, somos dos chicas de 22 años a las que nos encantan los niños.
-          Nos dedicamos al cuidado infantil y animación en eventos.
-        </p>
+          <p>
+            Hola, somos dos chicas de 22 años a las que nos encantan los niños.
+            Nos dedicamos al cuidado infantil y a la animación en eventos.
+          </p>
+          <p>
+            Una es educadora infantil y la otra psicóloga, así que ofrecemos un
+            cuidado cercano y profesional.
+          </p>
 
-        <p>
-          Una es educadora infantil y la otra psicóloga, ofreciendo un cuidado
-          cercano y profesional.
-        </p>
-      </div>
-
-      <div className="about-images">
-        <div className="about-card">
-          <img src="/chica1.png" />
-          <span>Educadora infantil</span>
+          <div className="team">
+            <figure className="team-member tone-pink">
+              <img src="/chica1.png" alt="Educadora infantil de LudikaT" loading="lazy" />
+              <figcaption>Educadora infantil</figcaption>
+            </figure>
+            <figure className="team-member tone-blue">
+              <img src="/chica2.png" alt="Psicóloga de LudikaT" loading="lazy" />
+              <figcaption>Psicóloga</figcaption>
+            </figure>
+          </div>
         </div>
 
-        <div className="about-card">
-          <img src="/chica2.png" />
-          <span>Psicóloga</span>
-        </div>
+        <div className="baby-stage" data-baby-stage data-baby-look="left" aria-hidden="true" />
       </div>
     </section>
   )

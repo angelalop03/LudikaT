@@ -104,6 +104,9 @@ function AdminPanel() {
               </strong>
 
               <p><b>Servicio:</b> {reserva.servicio}</p>
+              {reserva.cuidadora && (
+                <p><b>Con quién:</b> {reserva.cuidadora}</p>
+              )}
               <p><b>Email:</b> {reserva.cliente_email}</p>
               <p><b>Teléfono:</b> {reserva.telefono}</p>
               <p><b>Dirección:</b> {reserva.direccion}</p>
