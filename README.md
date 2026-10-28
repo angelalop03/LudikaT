@@ -1,8 +1,42 @@
+<div align="center">
+
+<img src="public/logo-rosa-512.png" alt="Logo de LudikaT" width="140" />
+
 # LudikaT
 
 Web de **LudikaT**, cuidado infantil y animación de cumpleaños y comuniones a cargo de una educadora infantil y una psicóloga. Tiene una landing 3D en tonos pastel, un calendario de reservas conectado a Supabase y un panel privado para las cuidadoras.
 
 🌐 **En producción:** https://ludika-t.vercel.app/
+
+<img src="docs/screenshots/portada.jpg" alt="Portada de LudikaT con el bebé 3D" width="100%" />
+
+</div>
+
+## Capturas
+
+<table>
+  <tr>
+    <td width="50%"><img src="docs/screenshots/cosquillas.jpg" alt="El bebé salta al hacerle clic" /></td>
+    <td width="50%"><img src="docs/screenshots/nosotras.jpg" alt="Sección Nosotras" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Al hacerle cosquillas, el bebé salta y da una vuelta</sub></td>
+    <td align="center"><sub>Nosotras: quiénes somos</sub></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/servicios.jpg" alt="Sección Servicios" /></td>
+    <td><img src="docs/screenshots/reserva.jpg" alt="Calendario y formulario de reserva" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>Servicios: el bebé cambia de lado al hacer scroll</sub></td>
+    <td align="center"><sub>Reserva: calendario y elección de cuidadora</sub></td>
+  </tr>
+</table>
+
+<p align="center">
+  <img src="docs/screenshots/movil.jpg" alt="LudikaT en el móvil" width="280" /><br />
+  <sub>Versión móvil</sub>
+</p>
 
 ## Qué incluye
 
@@ -69,6 +103,7 @@ La columna `cuidadora` se añadió con [supabase/add_cuidadora.sql](supabase/add
 ```
 ├── api/
 │   └── notificar-reserva.js   # Función de Vercel: correo de aviso con Resend
+├── docs/screenshots/          # Capturas que se ven en este README
 ├── public/                    # Logos y fotos
 ├── supabase/
 │   └── add_cuidadora.sql      # Columna "cuidadora" en la tabla Reservas
